@@ -1,0 +1,67 @@
+<?php
+
+/**
+* @file
+* Example module
+* This module presents a welcome message in a block. Created by Paola Garcia. */
+
+/*
+* Implements hook_block_info().
+*/
+function first_example_block_info() {
+  //Declaring the Block
+  $blocks['welcome'] = array(
+    'info' => t('My first module: welcome block'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  return $blocks;
+}
+
+/*
+* Implements hook_block_view().
+*/
+function first_example_block_view($delta = '') {
+  //Contents of the block 'welcome' defined in hook_block_info().
+  $block = array();
+  switch ($delta) {
+    case 'welcome':
+      $block['subject'] = t('My first module');
+      $block['content'] = variable_get('first_example_message'); 
+    break;
+  }
+  return $block;
+}
+
+/*
+* Implements hook_help().
+*/
+function first_example_help($path, $arg) {
+  switch ($path) {
+    //General help for First example module
+    case 'admin/help#first_example':
+      return '<p>' . t('This module shows a welcome message into a block.') . '</p>';
+    //Specific help which will be shown in the block administration area
+    case 'admin/structure/block':
+      return '<p>' . t('Use the block to show a welcome message.') . '</p>'; 
+    //Specific help for the profile admin user page
+    case 'user/%' && $arg[1]=1:
+      return '<p>' . t('Activating the module First example, the users of the site will receive a message of welcome.') . '</p>'; 
+  }
+}
+
+/**
+* Implements hook_menu().
+*/
+function first_example_menu() {
+  $items['admin/config/workflow/first_example'] = array(
+    'title' => 'First Example settings',
+    'description' => 'Settings for module First Example',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('first_example_admin_settings'),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'first_example.admin.inc'
+  );
+  return $items;
+}
